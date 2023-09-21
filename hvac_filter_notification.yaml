@@ -1,11 +1,11 @@
 blueprint:
   name: iPhone HVAC Filter Change Reminder
-  description: Sends a reminder to specified iPhones about the HVAC filter change at set intervals. Ensure your HVAC system stays efficient by routinely replacing or cleaning the filter. Select iPhone notify entities from the list.
+  description: Sends a reminder to specified iPhones about the HVAC filter change at set intervals. Ensure your HVAC system stays efficient by routinely replacing or cleaning the filter.
   domain: automation
   input:
-    iphone_targets:
-      name: iPhone Targets
-      description: The iPhones to notify. Please choose the 'notify' entities associated with your iPhones.
+    notify_targets:
+      name: Notification Targets
+      description: Choose the 'notify' entities associated with your iPhones.
       selector:
         entity:
           domain: notify
@@ -28,4 +28,4 @@ action:
   - service: notify.notify
     data:
       message: "It's time to change your HVAC's filter!"
-      target: !input "iphone_targets"
+      target: !input "notify_targets"
