@@ -1,0 +1,31 @@
+blueprint:
+  name: HVAC Filter Change Notification
+  description: Notify multiple people when it's time to change the HVAC's filter.
+  domain: automation
+  input:
+    notification_targets:
+      name: Notification Targets
+      description: The notification services or entities to notify.
+      selector:
+        entity:
+          domain: notify
+          multiple: true
+    days_interval:
+      name: Days Interval
+      description: Notify every X days.
+      default: 60
+      selector:
+        number:
+          min: 1
+          max: 365
+          unit_of_measurement: "days"
+
+trigger:
+  platform: time_pattern
+  days: !input "days_interval"
+
+action:
+  - service: notify.notify
+    data:
+      message: "It's time to change your HVAC's filter!"
+      target: !input "notification_targets"
