@@ -15,7 +15,6 @@ blueprint:
       selector:
         entity:
           domain: notify
-          default: null
 
 trigger:
   platform: time_pattern
@@ -30,9 +29,12 @@ action:
     data:
       title: "HVAC Filter Reminder"
       message: "It's time to change the HVAC filter!"
-  - condition: template
-    value_template: "{{ notify_device_2 != null }}"
-  - service: "notify.{{ notify_device_2 }}"
-    data:
-      title: "HVAC Filter Reminder"
-      message: "It's time to change the HVAC filter!"
+  - choose:
+      - conditions:
+          condition: template
+          value_template: "{{ notify_device_2 != none }}"
+        sequence:
+          - service: "notify.{{ notify_device_2 }}"
+            data:
+              title: "HVAC Filter Reminder"
+              message: "It's time to change the HVAC filter!"
