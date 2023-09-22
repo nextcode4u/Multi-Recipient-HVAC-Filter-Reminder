@@ -1,31 +1,38 @@
 blueprint:
-  name: iPhone HVAC Filter Change Reminder
-  description: Sends a reminder to specified iPhones about the HVAC filter change at set intervals. Ensure your HVAC system stays efficient by routinely replacing or cleaning the filter.
+  name: HVAC Filter Change Reminder
+  description: Send a notification to change the HVAC filter every 90 days starting from January 1st.
   domain: automation
   input:
-    notify_targets:
-      name: Notification Targets
-      description: Choose the 'notify' entities associated with your iPhones.
+    notify_device_1:
+      name: First Notification Device
+      description: The first device to receive the reminder.
       selector:
         entity:
           domain: notify
-          multiple: true
-    days_interval:
-      name: Days Interval
-      description: Notify every X days.
-      default: 60
+    notify_device_2:
+      name: Second Notification Device
+      description: The second device to receive the reminder (optional).
       selector:
-        number:
-          min: 1
-          max: 365
-          unit_of_measurement: "days"
+        entity:
+          domain: notify
+          default: null
 
 trigger:
   platform: time_pattern
-  days: !input "days_interval"
+  days: "1"
+
+condition:
+  condition: template
+  value_template: "{{ now().strftime('%j')|int % 90 == 1 }}"
 
 action:
-  - service: notify.notify
+  - service: "notify.{{ notify_device_1 }}"
     data:
-      message: "It's time to change your HVAC's filter!"
-      target: !input "notify_targets"
+      title: "HVAC Filter Reminder"
+      message: "It's time to change the HVAC filter!"
+  - condition: template
+    value_template: "{{ notify_device_2 != null }}"
+  - service: "notify.{{ notify_device_2 }}"
+    data:
+      title: "HVAC Filter Reminder"
+      message: "It's time to change the HVAC filter!"
